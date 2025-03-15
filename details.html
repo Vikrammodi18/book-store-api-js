@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+
+</head>
+<body>
+    <div class="details">
+        <h1>hello</h1>
+    </div>
+    <script>
+        const param = new URLSearchParams(window.location.search);
+        const id = param.get("id");
+        console.log(id)
+        const getDetailsById = async ()=>{
+
+            const url = `https://api.freeapi.app/api/v1/public/books/${id}`;
+        const options = {method: 'GET', headers: {accept: 'application/json'}};
+        try {
+      const response = await fetch(url, options);
+      const data = await response.json();
+      console.log(data.data);
+        } catch (error) {
+      console.error(error);
+        }
+        }
+        getDetailsById()
+    </script>
+</body>
+</html>

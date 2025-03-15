@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body>
+    <nav class="flex justify-center mt-3">
+        <form action="" class="search rounded-lg ">
+            <input type="text" name="" id="category" class="p-2 border  rounded-lg" placeholder="Enter Genre">
+            <button type="submit" class="btn bg-black text-white p-2 rounded" id="searchBtn">Search</button>
+          </form>
+    </nav>
+    <div class="main flex flex-wrap p-5">
+    </div>
+
+    <script>
+
+ 
+      const bookApi = async (genre) => {
+   
+        try {
+        
+          const url =
+        `https://api.freeapi.app/api/v1/public/books?page=1&limit=10&inc=kind%252Cid%252Cetag%252CvolumeInfo&query=${genre||"tech"}`;
+      const options = {
+        method: "GET",
+        headers: { accept: "application/json" },
+      };
+          const response = await fetch(url, options);
+          const data = await response.json();
+          return data;
+        } catch (error) {
+          console.error(error);
+        }
+      };
+      
+
+      const getData = async (genre) => {
+        
+        const main = document.querySelector(".main");
+        main.innerHTML = "";
+        const data = await bookApi(genre);
+        const dataId = data.data
+        const bookArray = data.data.data;
+        let index = 0;
+        for (let books of bookArray) {
+        
+          const card = document.createElement("div");
+          console.log(books.id)
+         
+          card.className =
+            "card w-60 bg-black text-black ml-5 mb-2  pl-8 p-4 shadow-lg  rounded-lg";
+          card.style.backgroundColor = "#d1d5db";
+          const image = document.createElement("img");
+          image.src = books.volumeInfo?.imageLinks?.smallThumbnail;
+          image.className = "w-30"
+          const title = document.createElement("h3");
+          title.className = "text-lg font-bold leading-none mb-2";
+          title.innerText = `${books?.volumeInfo?.title}`;
+
+          const button = document.createElement("a");
+          button.href = `details.html?id=${books.id}`;
+          button.className = "btn btn-primary mt-1 text-blue-500";
+          button.innerText = "Read more";
+
+          const p = document.createElement("p");
+          p.className = "opacity-75";
+          p.innerText = `Author: ${books?.volumeInfo?.authors?.[0] || "Unknown Author"}`;
+        
+          card.appendChild(image);
+          card.appendChild(title);
+          card.appendChild(p);
+          card.appendChild(button);
+          main.appendChild(card);
+        }
+
+      };
+
+      document.querySelector(".search").addEventListener("submit",(e)=>{
+        e.preventDefault();
+        const genre = document.getElementById("category").value;
+        console.log(genre)
+        getData(genre)
+      })
+      getData()
+    </script>
+  </body>
+</html>
