@@ -4,30 +4,94 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-
-
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+        }
+        .description-box{
+            width:600px;
+            height:400px;
+            overflow:auto;
+        }
+    </style>
 </head>
 <body>
-    <div class="details">
-        <h1>hello</h1>
+    <div class="details flex box-border p-5">
+        
     </div>
     <script>
-        const param = new URLSearchParams(window.location.search);
-        const id = param.get("id");
-        console.log(id)
-        const getDetailsById = async ()=>{
+        
+        const getDetailsById = async (id)=>{
 
-            const url = `https://api.freeapi.app/api/v1/public/books/${id}`;
+        const url = `https://api.freeapi.app/api/v1/public/books/${id}`;
         const options = {method: 'GET', headers: {accept: 'application/json'}};
         try {
       const response = await fetch(url, options);
       const data = await response.json();
+      return data
       console.log(data.data);
         } catch (error) {
       console.error(error);
         }
         }
-        getDetailsById()
+
+
+        const bigCard =async (id)=>{
+            const apiData = await getDetailsById(id)
+
+            let imgDiv = document.createElement("div")
+            imgDiv.className = "img-div mr-5 p-5"
+            let image = document.createElement("img")
+            image.src= `${apiData.data?.volumeInfo?.imageLinks?.thumbnail}`;
+            image.className = "image w-80 h-80 rounded-lg"
+            imgDiv.appendChild(image)
+
+            let titleAuthorDiv = document.createElement("div")
+            titleAuthorDiv.className = ""
+            let title = document.createElement("h4")
+            title.className = ""
+            title.textContent = `Title: ${apiData.data?.volumeInfo?.title}`
+
+            let author = document.createElement("h5")
+            author.textContent = `Author's Name: ${apiData.data?.volumeInfo?.authors?.[0]}`
+            author.className = ""
+            titleAuthorDiv.appendChild(title)
+            titleAuthorDiv.appendChild(author)
+            imgDiv.appendChild(titleAuthorDiv)
+
+
+            const about = document.createElement("div")
+            about.className = "about w-100 h-100"
+
+            const subtitle = document.createElement("h5")
+            subtitle.className = "subtitle"
+            subtitle.textContent = `Subtitle: ${apiData.data.volumeInfo?.subtitle || "empty"}`
+            const descriptionBox = document.createElement("div")
+            descriptionBox.className = "description-box"
+            const description = document.createElement("p")
+
+            description.className = "description min-w-sm"
+            description.textContent = `Description: ${apiData.data.volumeInfo?.description}`
+            descriptionBox.appendChild(description)
+            const publishDate = document.createElement("h5")
+            publishDate.className = "publishDate"
+            publishDate.textContent = `Public-date: ${apiData.data?.volumeInfo?.publishedDate}`
+
+
+            about.appendChild(subtitle)
+            about.appendChild(publishDate)
+            about.appendChild(descriptionBox)
+            const details = document.querySelector(".details")
+
+            details.appendChild(imgDiv).data
+            details.appendChild(about)
+        }
+        const param = new URLSearchParams(window.location.search);
+        const id = param.get("id");
+        console.log(id)
+        bigCard(id)
     </script>
 </body>
 </html>
